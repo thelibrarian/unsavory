@@ -53,9 +53,13 @@ urls.each_with_index do |url, idx|
   # Hackety fix for #1
   uri = URI.parse(url) rescue next
   response = nil
+  use_ssl = false
+  if uri.scheme == "https"
+    use_ssl = true
+  end
 
   begin
-    Net::HTTP.start(uri.host, uri.port) do |http|
+    Net::HTTP.start(uri.host, uri.port, :use_ssl => use_ssl) do |http|
       response = http.head(uri.path.size > 0 ? uri.path : "/")
     end
   rescue Errno::ENOENT
